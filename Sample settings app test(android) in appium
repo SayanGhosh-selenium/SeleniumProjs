@@ -1,0 +1,68 @@
+package Appium.AppiumDemo;
+
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.remote.MobileCapabilityType;
+
+public class WifiBluetoothTest {
+	
+	public AndroidDriver driver;
+	
+	@Test
+	public void loadSettings() throws MalformedURLException, InterruptedException
+	{
+		DesiredCapabilities dc = new DesiredCapabilities();
+
+        dc.setCapability(MobileCapabilityType.AUTOMATION_NAME, "uiautomator2");
+        dc.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");  // Android Emulator if your running emulator
+        dc.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
+        dc.setCapability(MobileCapabilityType.PLATFORM_VERSION, "10.0");
+
+        dc.setCapability("appPackage", "com.android.settings");
+        dc.setCapability("appActivity", "com.android.settings.homepage.SettingsHomepageActivity"); // This is Launcher activity of your app
+                                                                               
+        URL url = new URL("http://127.0.0.1:4723/wd/hub");
+
+        AndroidDriver driver = new AndroidDriver(url, dc);
+        
+        driver.findElement(By.id("android:id/title")).click();
+        Thread.sleep(2000);
+        String result = driver.findElement(By.xpath("//android.widget.TextView[@resource-id='android:id/summary']")).getText();
+        Thread.sleep(2000);
+        
+        if(result.equalsIgnoreCase("Off"))
+        {
+        	driver.findElement(By.id("com.android.settings:id/switchWidget")).click();
+        	Thread.sleep(5000);
+        }
+        String res = driver.findElement(By.xpath("//android.widget.TextView[@resource-id='android:id/summary']")).getText();
+        System.out.println("The wifi provider is : "+ res);
+        driver.findElement(By.className("android.widget.ImageButton")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//android.widget.LinearLayout[@index='1']")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//android.widget.LinearLayout[@index='3']")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.id("android:id/title")).click();
+        Thread.sleep(2000);
+        String bu = driver.findElement(By.id("android:id/title")).getText();
+        System.out.println("The bluetooth is : "+ bu);
+	}
+	
+	@AfterTest
+	public void close()
+	{
+		System.out.println("The test done .....");
+		
+	}
+
+}
